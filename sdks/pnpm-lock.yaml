@@ -28,6 +28,12 @@ importers:
       '@solana/kit':
         specifier: ^6.1.0
         version: 6.1.0(typescript@5.8.3)
+      '@solana/kit-plugin-instruction-plan':
+        specifier: ^0.6.0
+        version: 0.6.0(@solana/kit@6.1.0(typescript@5.8.3))
+      '@solana/kit-plugin-payer':
+        specifier: ^0.6.0
+        version: 0.6.0(@solana/kit@6.1.0(typescript@5.8.3))
       '@solana/prettier-config-solana':
         specifier: ^0.0.6
         version: 0.0.6(prettier@3.6.2)
@@ -580,6 +586,16 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  '@solana/kit-plugin-instruction-plan@0.6.0':
+    resolution: {integrity: sha512-YqAAipZPkzJlADnXfhJ3Jz7AILrkfl6x+Wi0oyk26KgsgCrfcxr0ebhwQt2fUsyVceC++6AF0pK/UsFUj/HeZw==}
+    peerDependencies:
+      '@solana/kit': ^6.1.0
+
+  '@solana/kit-plugin-payer@0.6.0':
+    resolution: {integrity: sha512-dtPpzhGtv0RaFGJWtXM/LYrDrM9a2AJK7X1/0rXMmFNAFxQE9M8H7TO0bczaFpZ6HFHYcp3XjOYQh/aBakaE4g==}
+    peerDependencies:
+      '@solana/kit': ^6.1.0
 
   '@solana/kit@6.1.0':
     resolution: {integrity: sha512-24exn11BPonquufyCkGgypVtmN4JOsdGMsbF3EZ4kFyk7ZNryCn/N8eELr1FCVrHWRXoc0xy/HFaESBULTMf6g==}
@@ -2737,6 +2753,14 @@ snapshots:
       typescript: 5.8.3
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
+
+  '@solana/kit-plugin-instruction-plan@0.6.0(@solana/kit@6.1.0(typescript@5.8.3))':
+    dependencies:
+      '@solana/kit': 6.1.0(typescript@5.8.3)
+
+  '@solana/kit-plugin-payer@0.6.0(@solana/kit@6.1.0(typescript@5.8.3))':
+    dependencies:
+      '@solana/kit': 6.1.0(typescript@5.8.3)
 
   '@solana/kit@6.1.0(typescript@5.8.3)':
     dependencies:

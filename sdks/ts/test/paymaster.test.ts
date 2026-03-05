@@ -1,4 +1,4 @@
-import { createDefaultKoraClient, type KoraPaymasterClient } from '../src/paymaster.js';
+import { createDefaultKoraClient, type KoraPaymasterClient } from '../src/kit-client.js';
 import { address, createNoopSigner, type Address, signature as kitSignature } from '@solana/kit';
 
 // Mock fetch globally
@@ -55,10 +55,8 @@ describe('createDefaultKoraClient', () => {
                 feePayerWallet: MOCK_WALLET,
             });
 
-            expect(client.payerAddress).toBe(MOCK_PAYER_ADDRESS);
             expect(client.paymentAddress).toBe(MOCK_PAYMENT_ADDRESS);
-            expect(client.payerSigner.address).toBe(MOCK_PAYER_ADDRESS);
-            // ClientWithPayer: payer is same as payerSigner
+            // ClientWithPayer: payer is a NoopSigner for the Kora fee payer
             expect(client.payer.address).toBe(MOCK_PAYER_ADDRESS);
             expect(mockFetch).toHaveBeenCalledTimes(1);
 
@@ -282,7 +280,7 @@ describe('createDefaultKoraClient', () => {
     });
 
     describe('plugin composition', () => {
-        it('should support .use() for extending the client', async () => {
+        it('should support .use() for extending the client with a Kit plugin', async () => {
             mockRpcResponse({
                 signer_address: MOCK_PAYER_ADDRESS,
                 payment_address: MOCK_PAYMENT_ADDRESS,
@@ -294,21 +292,22 @@ describe('createDefaultKoraClient', () => {
                 feePayerWallet: MOCK_WALLET,
             });
 
-            // Add a custom plugin
-            const extended = client.use(() => ({
+            // Kit plugins must spread the client to preserve existing properties
+            const extended = client.use(<T extends object>(c: T) => ({
+                ...c,
                 custom: {
                     hello: () => 'world',
                 },
             }));
 
             expect(extended.custom.hello()).toBe('world');
-            // Original methods still available
+            // Original methods preserved via spread
             expect(extended.kora).toBeDefined();
             expect(typeof extended.sendTransaction).toBe('function');
             expect(typeof extended.planTransaction).toBe('function');
         });
 
-        it('should use correct spread order (plugin additions win over client)', async () => {
+        it('should preserve existing properties when extending via plugin spread', async () => {
             mockRpcResponse({
                 signer_address: MOCK_PAYER_ADDRESS,
                 payment_address: MOCK_PAYMENT_ADDRESS,
@@ -320,14 +319,15 @@ describe('createDefaultKoraClient', () => {
                 feePayerWallet: MOCK_WALLET,
             });
 
-            // Plugin that adds extra property
-            const extended = client.use(() => ({
+            // Plugin that adds extra property (with spread)
+            const extended = client.use(<T extends object>(c: T) => ({
+                ...c,
                 extra: 42,
             }));
 
             expect(extended.extra).toBe(42);
-            // Original client methods preserved
-            expect(extended.payerAddress).toBe(MOCK_PAYER_ADDRESS);
+            expect(extended.payer.address).toBe(MOCK_PAYER_ADDRESS);
+            expect(extended.paymentAddress).toBe(MOCK_PAYMENT_ADDRESS);
         });
     });
 
